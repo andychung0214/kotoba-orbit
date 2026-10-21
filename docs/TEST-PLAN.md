@@ -30,4 +30,3 @@
 確認 Git diff 無空白錯誤、明確提交清單無私密檔、npm audit、GitHub Pages 建置結果、實際 HTTP 200、子路徑資產、線上遊戲流程。
 
 實際結果以 VERIFICATION.md 與 test-results/report.json 為準；本文件的待辦勾選不代表未執行項目已通過。
-
