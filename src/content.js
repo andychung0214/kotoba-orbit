@@ -1,15 +1,16 @@
 import { songs } from './songs.js';
+import {extraKana,extraVocabulary,extraSentences} from './expanded-content.js';
 export { songs };
 const hiragana = [...'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん'];
 const katakana = [...'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'];
 const roman = 'a i u e o ka ki ku ke ko sa shi su se so ta chi tsu te to na ni nu ne no ha hi fu he ho ma mi mu me mo ya yu yo ra ri ru re ro wa wo n'.split(' ');
-export const kana = hiragana.map((hira,i) => ({hira, kata:katakana[i], roman:roman[i]}));
+export const kana = [...hiragana.map((hira,i) => ({hira, kata:katakana[i], roman:roman[i],level:'beginner',group:'清音'})),...extraKana];
 const vocabulary = [
  ['夜','よる','夜晚','beginner'],['朝','あさ','早晨','beginner'],['本','ほん','書','beginner'],['水','みず','水','beginner'],['駅','えき','車站','beginner'],['友達','ともだち','朋友','beginner'],['音楽','おんがく','音樂','beginner'],['花','はな','花','beginner'],['海','うみ','海','beginner'],['夢','ゆめ','夢','beginner'],['学校','がっこう','學校','beginner'],['時間','じかん','時間','beginner'],
  ['約束','やくそく','約定','intermediate'],['記憶','きおく','記憶','intermediate'],['未来','みらい','未來','intermediate'],['気持ち','きもち','心情','intermediate'],['旅','たび','旅程','intermediate'],['景色','けしき','風景','intermediate'],['選ぶ','えらぶ','選擇','intermediate'],['伝える','つたえる','傳達','intermediate'],['別れ','わかれ','離別','intermediate'],['再会','さいかい','重逢','intermediate'],
  ['憧れ','あこがれ','憧憬','advanced'],['葛藤','かっとう','內心衝突','advanced'],['余韻','よいん','餘韻','advanced'],['絆','きずな','羈絆','advanced'],['儚い','はかない','短暫而易逝','advanced'],['懐かしい','なつかしい','令人懷念的','advanced'],['向き合う','むきあう','面對','advanced'],['受け入れる','うけいれる','接納','advanced']
 ];
-export const words = vocabulary.map(([word,reading,meaning,level],i) => ({id:`word-${i}`,word,reading,meaning,level}));
+export const words = [...vocabulary,...extraVocabulary].map(([word,reading,meaning,level],i) => ({id:`word-${i}`,word,reading,meaning,level}));
 const sentenceRows = [
  ['beginner','我每天喝茶。','私は|毎日|お茶を|飲みます。','は標示主題，を標示喝的對象。'],
  ['beginner','車站在哪裡？','駅は|どこ|ですか。','どこ詢問地點；ですか是禮貌問句。'],
@@ -35,9 +36,18 @@ const naturalOrders = {
   7:[[2,0,1,3]],
   9:[[1,0,2,3]]
 };
-export const sentences = sentenceRows.map(([level,meaning,text,explanation],i) => {
+const swappableClauses=new Set([
+ '我喜歡音樂。','桌上有一本書。','房間裡有一隻狗。','我想喝水。','我不吃肉。','我昨天買了鞋子。',
+ '一起去吃午餐吧。','電車幾點出發？','我每天七點起床。','請不要在這裡吸菸。','出門前先確認天氣。',
+ '吃完飯後再吃藥。','我曾經去過京都。','為了健康，我每天走路。','我可以讀平假名。',
+ '即使再忙，也不能忘記約定。','光是等待，什麼也不會改變。','我沒想到竟然會在這裡重逢。',
+ '必須根據情況改變做法。','不論結果如何，我都會繼續努力。','隨著年齡增長，價值觀也改變了。',
+ '既然是重要的事情，就不能草率決定。','如果沒有朋友的幫助，就不可能成功。','無論如何都必須遵守這個約定。'
+]);
+export const sentences = [...sentenceRows,...extraSentences].map(([level,meaning,text,explanation],i) => {
   const tokens=text.split('|');
-  return {id:`sentence-${i}`,level,meaning,tokens,explanation,alternatives:(naturalOrders[i]||[]).map(order=>order.map(index=>tokens[index]))};
+  const orders=[...(naturalOrders[i]||[]),...(swappableClauses.has(meaning)?[[1,0,...tokens.slice(2).map((_,j)=>j+2)]]:[])];
+  return {id:`sentence-${i}`,level,meaning,tokens,explanation,alternatives:orders.map(order=>order.map(index=>tokens[index]))};
 });
 export const levels = {beginner:'基礎',intermediate:'中階',advanced:'進階'};
 export const modes = {kana:'假名閃卡',match:'詞彙連線',order:'句子拼軌',song:'音樂讀本'};

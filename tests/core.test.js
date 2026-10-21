@@ -41,7 +41,7 @@ test('round scoring clamps values and preserves previous progress', () => {
   assert.equal(recordRound(p,{mode:'kana',correct:-3,total:8}).xp,0);
 });
 test('content includes 46 kana, 16 unique songs and all difficulty levels', () => {
-  assert.equal(kana.length,46); assert.equal(new Set(kana.map(k=>k.hira)).size,46);
+  assert.equal(kana.filter(k=>k.level==='beginner').length,46); assert.equal(new Set(kana.map(k=>k.hira)).size,kana.length);
   assert.equal(songs.length,16); assert.equal(new Set(songs.map(s=>s.id)).size,16);
   for (const level of ['beginner','intermediate','advanced']) {
     assert.ok(words.filter(w=>w.level===level).length>=6);
