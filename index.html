@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10131e">
+  <meta name="description" content="言葉軌道：從五十音到生活句子，用四種短回合遊戲學日語。沿著 YOASOBI 的 16 首歌，讀故事、練習詞彙。">
+  <meta property="og:title" content="Kotoba Orbit｜言葉軌道"><meta property="og:description" content="讓喜歡的音樂，成為學會日語的起點。四種學習遊戲與十六首音樂讀本。"><meta property="og:type" content="website">
+  <title>Kotoba Orbit｜言葉軌道</title>
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml"><link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+  <aside class="sidebar">
+    <a class="brand" href="#home" aria-label="言葉軌道首頁"><span class="brand-mark">こ<span>・</span></span><span>KOTOBA<span class="brand-orbit">ORBIT</span><small>言葉軌道</small></span></a>
+    <div class="side-label">YOUR LITTLE LANGUAGE STUDIO</div>
+    <nav aria-label="主要導覽">
+      <a href="#home" data-nav="home"><span aria-hidden="true">◈</span> 學習大廳</a>
+      <a href="#games" data-nav="games"><span aria-hidden="true">▦</span> 遊戲練習場</a>
+      <a href="#songs" data-nav="songs"><span aria-hidden="true">♫</span> 音樂讀本 <small>16</small></a>
+      <a href="#progress" data-nav="progress"><span aria-hidden="true">▥</span> 我的學習軌跡</a>
+      <a href="#kana" data-nav="kana"><span aria-hidden="true">あ</span> 五十音小抄</a>
+    </nav>
+    <div class="side-note"><span class="tiny-orbit" aria-hidden="true">✳</span><p lang="ja">好きから、はじめよう。</p><small>從喜歡的事物開始，<br>每天多懂一點日語。</small></div>
+    <div class="side-bottom"><span class="online-dot"></span> 私人的學習空間 <span>v1.0</span></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><span id="breadcrumb">學習大廳 <span class="muted">／ LEARNING LOUNGE</span></span><div class="top-actions"><span id="xp-total">0 XP</span><span class="avatar" aria-label="本機學習者">こ</span></div></header>
+    <main id="main" tabindex="-1"></main>
+    <footer>用好奇心，收藏每一個新單字。<span>KOTOBA ORBIT · 非官方學習專案</span></footer>
+  </div>
+  <dialog id="game-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span id="dialog-label">PRACTICE SESSION</span><button id="close-dialog" class="icon-button" aria-label="結束並關閉練習">×</button></div><div id="dialog-body"></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <noscript>請啟用 JavaScript 以使用日語學習遊戲。</noscript>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>

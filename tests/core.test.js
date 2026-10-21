@@ -24,6 +24,10 @@ test('sentence order is exact and handles missing tokens', () => {
   assert.equal(gradeOrder(['本を','私は','読みます。'], ['私は','本を','読みます。']),false);
   assert.equal(gradeOrder([], ['私は']),false);
 });
+test('sentence order accepts explicitly reviewed natural variants', () => {
+  assert.equal(gradeOrder(['毎日','私は','お茶を','飲みます。'], ['私は','毎日','お茶を','飲みます。'], [['毎日','私は','お茶を','飲みます。']]),true);
+  assert.equal(gradeOrder(['飲みます。','私は','毎日','お茶を'], ['私は','毎日','お茶を','飲みます。'], [['毎日','私は','お茶を','飲みます。']]),false);
+});
 test('corrupt and denied storage returns safe progress', () => {
   for (const storage of [{getItem:()=>'{oops'},{getItem:()=>'{"xp":-1,"rounds":"oops"}'},{getItem:()=>{throw Error('denied');}}]) {
     const p = readProgress(storage); assert.equal(p.xp,0); assert.deepEqual(p.rounds,[]);

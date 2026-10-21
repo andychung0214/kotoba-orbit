@@ -18,21 +18,21 @@
 
 ## 工作分解與里程碑
 ### M1：內容與純函式核心
-- [ ] 建立 src/content.js：46 組清音平／片假名、分級詞彙與句子、16 首曲目與原創練習。
-- [ ] 先寫 tests/core.test.js，執行確認失敗，再建立 src/core.js。
-- [ ] 介面：shuffle(items, random)、makeQuiz(items, limit)、gradeOrder(selected, expected)、readProgress(storage)、recordRound(progress, result)。
-- [ ] 驗收：題目唯一正解、洗牌保留集合、計分不超出範圍、損壞或不可用儲存可復原。
+- [x] 建立 src/content.js：46 組清音平／片假名、分級詞彙與句子、16 首曲目與原創練習。
+- [x] 先寫 tests/core.test.js，執行確認失敗，再建立 src/core.js。
+- [x] 介面：shuffle(items, random)、makeQuiz(items, limit)、gradeOrder(selected, expected)、readProgress(storage)、recordRound(progress, result)。
+- [x] 驗收：題目唯一正解、洗牌保留集合、計分不超出範圍、損壞或不可用儲存可復原。
 ### M2：可遊玩的網站
-- [ ] index.html/styles.css/src/app.js：首頁、遊戲集、曲目資料館、學習紀錄，原生 dialog。
-- [ ] 四種遊戲：假名四選一、漢字詞彙配對、句子重組、歌曲主題四選一。每題回饋、解說、結果與重玩。
-- [ ] src/stage.js：本機 three.js 唱片場景、指標互動、減少動態與無 WebGL 替代。
-- [ ] 驗收：每種模式完成一回合、錯答不重複得分、重玩重置、鍵盤與觸控均可操作。
+- [x] index.html/styles.css/src/app.js：首頁、遊戲集、曲目資料館、學習紀錄，原生 dialog。
+- [x] 四種遊戲：假名四選一、漢字詞彙配對、句子重組、歌曲主題四選一。每題回饋、解說、結果與重玩。
+- [x] src/stage.js：本機 three.js 唱片場景、指標互動、減少動態與無 WebGL 替代。
+- [x] 驗收：每種模式完成一回合、錯答不重複得分、重玩重置、鍵盤與觸控均可操作。
 ### M3：驗證與交付
-- [ ] Node 單元測試、Playwright 桌機／手機瀏覽器測試與截圖。
-- [ ] 補齊 README、ART-DIRECTION、TEST-PLAN、LICENSE、CONTRIBUTING、資產製作說明。
-- [ ] 獨立程式碼審查，修復影響使用者的問題，再重新驗證。
+- [x] Node 單元測試、Playwright 桌機／手機瀏覽器測試與截圖。
+- [x] 補齊 README、ART-DIRECTION、TEST-PLAN、LICENSE、CONTRIBUTING、資產製作說明。
+- [x] 獨立程式碼審查，修復影響使用者的問題，再重新驗證。
 ### M4：Git 與 Pages
-- [ ] 新 Git 儲存庫 feature/initial-release；初始文件與產品提交。
+- [x] 新 Git 儲存庫 feature/initial-release；初始文件與產品提交。
 - [ ] 建立公開 GitHub 儲存庫，推送前揭露 remote／branch／commit，使用 branch 根目錄 Pages。
 - [ ] 等待 Pages 建置並實際 HTTP 與瀏覽器驗證；若缺少帳號權限則如實記錄。
 
@@ -45,3 +45,4 @@
 
 ## 驗收條件
 所有必要文件存在；四種遊戲完整流程；16 首均可開啟；46 清音涵蓋平片假名；基礎／中階／進階題庫；紀錄重載保留；桌機與行動測試通過；無主控台程式錯誤；Git 有提交；Pages 發布狀態與實際驗證證據清楚記載。
+
