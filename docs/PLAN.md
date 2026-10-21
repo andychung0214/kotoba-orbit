@@ -33,8 +33,8 @@
 - [x] 獨立程式碼審查，修復影響使用者的問題，再重新驗證。
 ### M4：Git 與 Pages
 - [x] 新 Git 儲存庫 feature/initial-release；初始文件與產品提交。
-- [ ] 建立公開 GitHub 儲存庫，推送前揭露 remote／branch／commit，使用 branch 根目錄 Pages。
-- [ ] 等待 Pages 建置並實際 HTTP 與瀏覽器驗證；若缺少帳號權限則如實記錄。
+- [x] 建立公開 GitHub 儲存庫，推送前揭露 remote／branch／commit，使用 branch 根目錄 Pages。
+- [x] 等待 Pages 建置並實際 HTTP 與瀏覽器驗證；正式網址 HTTP 200、106 項瀏覽器檢查通過。
 
 ## Review Focus／風險
 1. localStorage 拒絕或 JSON 損壞：使用者仍可遊玩，明確告知紀錄未持久化。

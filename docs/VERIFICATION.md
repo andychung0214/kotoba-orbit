@@ -32,4 +32,13 @@
 - Blender 缺少執行檔、Unreal 與純靜態限制不相容，實際執行使用 three.js，替代製作流程另載 ASSET-PIPELINE.md。
 
 ## 發布
-公開儲存庫已建立：https://github.com/andychung0214/kotoba-orbit 。Pages 狀態於完成部署後補記。
+公開儲存庫：https://github.com/andychung0214/kotoba-orbit
+
+正式網站：https://andychung0214.github.io/kotoba-orbit/
+
+- 分支：feature/initial-release，根目錄 Pages，HTTPS。
+- 產品發布 commit：07e4fae1688ce661e4dcb0ba63130a217d20e313。
+- Pages workflow 39529784663：completed / success。
+- 建置證據：https://github.com/andychung0214/kotoba-orbit/actions/runs/39529784663
+- 正式網址 HTTP 200；在正式網址重跑全部 106 項瀏覽器檢查通過，無未捕捉的程式錯誤。
+- 已使用 Chrome 開啟正式網站確認首頁，並保留交付分頁。
