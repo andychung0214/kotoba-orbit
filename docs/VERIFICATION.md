@@ -2,6 +2,15 @@
 
 日期：2026-10-21（Asia/Taipei）。
 
+## 日語發音：本機驗證
+- 新增測試先因 speech.js 尚未存在而失敗，實作後 `npm test` 30 / 30 通過。
+- `node tests/speech-browser.js`：20 項發音操作檢查通過，使用可控語音替身驗證送入引擎的文字、語言、停止與錯誤行為。
+- 同一測試另以真實 Edge 語音引擎播放「あ」，找到 4 個日語語音並收到 start、end 事件；沒有宣稱人工聽音校對。
+- `npm run test:browser`：122 項檢查、86 個完整遊戲回合通過。發音按鈕不會同時作答；390px 截圖已檢視。
+- 測試發現關閉對話框的非同步事件會延後停止，已在關閉按鈕與 Escape 取消事件立即停止，再測通過。
+- 獨立審查發現對話框外的播放錯誤提示會被模態層遮蔽；已將提示置於目前開啟的對話框內，並驗證無障礙樹可讀到提示。獨立複查確認 ignored: false、role: status、live: polite，未發現新的重要問題。
+- 本機證據：test-results/unit-speech.log、browser-speech.log、browser-speech-regression.log、speech-mobile.png。正式站驗證於交付訊息報告。
+
 ## 題庫擴充：本機最終驗證
 - `npm test`：25 / 25 通過。
 - `npm run test:browser`：122 項檢查、86 個完整回合通過，無未捕捉的瀏覽器錯誤。
