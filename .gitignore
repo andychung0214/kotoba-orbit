@@ -1,0 +1,10 @@
+node_modules/
+test-results/
+.env
+.env.*
+*.pem
+*.key
+*.blend1
+.sdd-workspaces/
+dist/
+*.log
