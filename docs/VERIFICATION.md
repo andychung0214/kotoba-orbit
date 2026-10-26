@@ -1,6 +1,8 @@
 # 驗證紀錄
 
 ## 八種不同學習目標的新題型：2026-10-26
+- 2026-10-27 正式站驗證：產品提交 c4e82819cc743eb1989ca0c43dc3ec0bae6e5bdf；[Pages 建置 40351431319](https://github.com/andychung0214/kotoba-orbit/actions/runs/40351431319) completed / success。
+- 設定 TEST_URL 為正式網址後，158 項瀏覽器檢查、122 個完整回合、20 項發音操作檢查全部通過；原生 Edge 找到 4 個日語語音並收到 start／end 事件，無未捕捉的瀏覽器錯誤。紀錄：test-results/new-types-production.log、new-types-production-speech.log（本機）。
 - 新題型測試先 12 項失敗，再實作；最終 `npm test` 45 / 45 通過。
 - 題型數每級為假名 7、詞彙 7、句子 7、歌曲 9；新增拍數、缺字、反義、搭配、意圖、文法修正、短文推論、情境接話。
 - `npm run test:browser` 最終 158 項檢查、122 個完整回合通過，涵蓋新增單獨題型各三級與全部歌曲三級；無未捕捉的程式錯誤。
