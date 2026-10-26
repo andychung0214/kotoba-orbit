@@ -37,13 +37,13 @@ function levelOptions(){return Object.entries(levels).map(([id,label])=>`<option
 function settings() { return `<div class="practice-settings"><label for="level">練習難度</label><select id="level">${levelOptions()}</select><label for="kana-type">假名字形</label><select id="kana-type"><option value="hira" ${kanaType==='hira'?'selected':''}>平假名</option><option value="kata" ${kanaType==='kata'?'selected':''}>片假名</option></select><span class="hint">四種遊戲皆適用 · 每局隨機出題</span></div>`; }
 const songQuestionCount=(id,selectedLevel)=>buildBank({mode:'song',songId:id,level:selectedLevel}).length;
 const songTotalCount=id=>Object.keys(levels).reduce((sum,l)=>sum+songQuestionCount(id,l),0);
-function typePicker(mode){return mode==='song'?`<p class="bank-hint">每首 ${songTotalCount('yoru')} 題 · 七種題型</p>`:`<label class="type-label" for="type-${mode}">練習題型</label><select id="type-${mode}" class="type-picker" data-practice-type="${mode}">${Object.entries(questionTypes[mode]).map(([value,label])=>`<option value="${value}" ${practiceTypes[mode]===value?'selected':''}>${label}</option>`).join('')}</select>`;}
+function typePicker(mode){return mode==='song'?`<p class="bank-hint">每首 ${songTotalCount('yoru')} 題 · 九種題型</p>`:`<label class="type-label" for="type-${mode}">練習題型</label><select id="type-${mode}" class="type-picker" data-practice-type="${mode}">${Object.entries(questionTypes[mode]).map(([value,label])=>`<option value="${value}" ${practiceTypes[mode]===value?'selected':''}>${label}</option>`).join('')}</select>`;}
 const gameCards = () => `<div class="games-grid">
   ${[
-    ['kana','あ','基礎 → 進階','假名閃卡','清音、濁音到拗音。<br>讀音、選字與字形互換。','8 題 · 隨機出題'],
-    ['match','結','基礎 → 進階','詞彙連線','把意思連起來。<br>漢字、讀音與中文一起記。','5 組 · 約 3 分鐘'],
-    ['order','文','基礎 → 進階','句子拼軌','重組、中譯日與雙向填空。<br>72 句生活日語，換個角度練習。','6 題 · 隨機出題'],
-    ['song','♫','16 首讀本','音樂讀本','沿著喜歡的旋律。<br>主題詞彙、原創例句與文法。','6 題 · 隨機出題']
+    ['kana','あ','基礎 → 進階','假名閃卡','清音、濁音到拗音。<br>讀音、拍數與單字拼寫。','8 題 · 隨機出題'],
+    ['match','結','基礎 → 進階','詞彙連線','把意思連起來。<br>反義詞、自然搭配一起記。','5 組 · 約 3 分鐘'],
+    ['order','文','基礎 → 進階','句子拼軌','重組、中譯日與雙向填空。<br>加上語句意圖與文法修正。','6 題 · 隨機出題'],
+    ['song','♫','16 首讀本','音樂讀本','沿著喜歡的旋律。<br>主題練習、短文推論與接話。','6 題 · 隨機出題']
   ].map(([mode,symbol,tag,title,description,meta])=>`<article class="game-card"><div class="card-top"><div class="game-symbol" lang="ja" aria-hidden="true">${symbol}</div><span class="chip">${tag}</span></div><h3>${title}</h3><p>${description}</p>${typePicker(mode)}<button class="card-action" data-start="${mode}" aria-label="開始${title}">${meta}<span aria-hidden="true">↗</span></button></article>`).join('')}
 </div>`;
 function home() {
@@ -96,7 +96,7 @@ function showSong(id) {
   pronunciation.stop();
   const song=songs.find(s=>s.id===id); if(!song)return;
   session=null;
-  body.innerHTML=`<article class="song-detail"><div class="eyebrow">YOASOBI / ${song.year}</div><h2 id="dialog-title" lang="ja">${escape(song.title)}</h2><p>${escape(song.zh)} · ${escape(song.theme)}</p><dl class="detail-meta"><dt>原作</dt><dd lang="ja">${escape(song.story)}</dd><dt>作者</dt><dd lang="ja">${escape(song.author)}</dd><dt>這篇讀本練習什麼</dt><dd>「<span lang="ja" data-pronunciation="${escape(song.reading)}">${escape(song.word)}（${escape(song.reading)}）</span>」：${escape(song.meaning)}。先讀背景，再練習單字與一句生活日語。</dd></dl><p>這裡用「${escape(song.theme)}」作為學習切入點。它是本站的主題延伸，不是原作情節摘要，也不是歌詞逐句翻譯。想深入理解作品，請閱讀原作來源。</p><div class="source-links"><a href="${song.source}" target="_blank" rel="noopener noreferrer">原作／出版來源 ↗</a><a href="${song.listen}" target="_blank" rel="noopener noreferrer">觀看官方 MV ↗</a></div><div class="practice-settings"><label for="song-level">這回合的難度</label><select id="song-level">${levelOptions()}</select><span class="hint">每級 ${songQuestionCount(song.id,level)} 題 · 七種題型隨機抽 6 題</span></div><button class="primary" data-song-start="${song.id}">開始隨機 6 題練習 ↗</button></article>`;
+  body.innerHTML=`<article class="song-detail"><div class="eyebrow">YOASOBI / ${song.year}</div><h2 id="dialog-title" lang="ja">${escape(song.title)}</h2><p>${escape(song.zh)} · ${escape(song.theme)}</p><dl class="detail-meta"><dt>原作</dt><dd lang="ja">${escape(song.story)}</dd><dt>作者</dt><dd lang="ja">${escape(song.author)}</dd><dt>這篇讀本練習什麼</dt><dd>「<span lang="ja" data-pronunciation="${escape(song.reading)}">${escape(song.word)}（${escape(song.reading)}）</span>」：${escape(song.meaning)}。先讀背景，再練習單字與一句生活日語。</dd></dl><p>這裡用「${escape(song.theme)}」作為學習切入點。它是本站的主題延伸，不是原作情節摘要，也不是歌詞逐句翻譯。想深入理解作品，請閱讀原作來源。</p><div class="source-links"><a href="${song.source}" target="_blank" rel="noopener noreferrer">原作／出版來源 ↗</a><a href="${song.listen}" target="_blank" rel="noopener noreferrer">觀看官方 MV ↗</a></div><div class="practice-settings"><label for="song-level">這回合的難度</label><select id="song-level">${levelOptions()}</select><span class="hint">每級 ${songQuestionCount(song.id,level)} 題（含共同閱讀）· 隨機抽 6 題</span></div><button class="primary" data-song-start="${song.id}">開始隨機 6 題練習 ↗</button></article>`;
   openDialog('MUSIC READER / 原作與日語');
 }
 function start(mode, songId) {
@@ -135,7 +135,7 @@ function answer(value) {
   body.querySelectorAll('.choice,.token,#check-order').forEach(b=>b.disabled=true);
   if(q.kind!=='order')body.querySelectorAll('.choice').forEach(b=>{const v=q.options[Number(b.dataset.choice)];b.classList.toggle('correct',v===q.answer);b.classList.toggle('incorrect',v===value&&!correct);});
   $('#feedback').className=`feedback ${correct?'':'wrong'}`;
-  $('#feedback').innerHTML=`<strong>${correct?'✓ 答對了！':'再記一次，也是一種進步。'}</strong>${correct?'':`正確答案：<span lang="ja">${escape(q.answer||q.tokens.join(''))}</span><br>`}${escape(q.explanation)}${q.speechAnswer?`<div class="spoken-answer"><span lang="ja" data-pronunciation="${escape(q.speechAnswer)}">${escape(q.speechAnswer)}</span></div>`:""}`;
+  $('#feedback').innerHTML=`<strong>${correct?'✓ 答對了！':'再記一次，也是一種進步。'}</strong>${correct?'':`正確答案：<span lang="${q.answerLang||'ja'}">${escape(q.answer||q.tokens.join(''))}</span><br>`}${escape(q.explanation)}${q.speechAnswer?`<div class="spoken-answer"><span lang="ja" data-pronunciation="${escape(q.speechAnswer)}">${escape(q.speechAnswer)}</span></div>`:""}`;
   $('#next-question').hidden=false;$('#next-question').focus();
 }
 function renderMatch() {
@@ -156,7 +156,7 @@ function finish() {
   s.recorded=true;
   const total=s.mode==='match'?5:s.questions.length;
   progress=recordRound(progress,{mode:s.mode,level:s.level,type:s.type,correct:s.correct,total,date:today()});save();
-  if(s.mode==='match')s.wrong=s.pairs.filter(w=>s.mistakes.has(w.id)).map(w=>({speech:w.reading,prompt:w.word,answer:`${w.reading} · ${w.meaning}`,explanation:'下次再遇見這個單字時，試著先想起它的意思。'}));
+  if(s.mode==='match')s.wrong=s.pairs.filter(w=>s.mistakes.has(w.id)).map(w=>({speech:[w.leftSpeech,w.rightSpeech].filter(Boolean).join('、'),prompt:w.leftLabel,answer:w.rightLabel,explanation:w.explanation}));
   body.innerHTML=`<div class="result"><div class="result-icon" aria-hidden="true">✳</div><div class="eyebrow" style="justify-content:center">A LITTLE MORE JAPANESE</div><h2 id="dialog-title">又靠近日語一點了。</h2><div class="result-score">${s.correct}<span class="muted"> / ${total}</span></div><p>首次答對 ${s.correct} 題 · +${s.correct*10} XP<br>${s.correct===total?'這一回合全部答對，換個難度再出發吧。':'讓這些還不熟悉的字，成為下一次的熟悉。'}</p>${s.wrong.length?`<div class="review-list"><h3>這回合的小筆記</h3>${s.wrong.map(w=>`<div class="review-item">${escape(w.prompt)}<br><strong>${escape(w.answer)}</strong>${w.speech?`<span data-pronunciation="${escape(w.speech)}"></span>`:""}<br><span class="muted">${escape(w.explanation)}</span></div>`).join('')}</div>`:''}<div class="result-actions"><button class="primary" id="replay">再練一回合 ↗</button><button class="secondary" id="done">回到學習大廳</button></div></div>`;
   $('#dialog-title').tabIndex=-1;$('#dialog-title').focus();
 }

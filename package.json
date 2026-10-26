@@ -6,7 +6,7 @@
   "description": "言葉軌道：音樂主題日語學習遊戲集",
   "scripts": {
     "start": "node scripts/serve.js",
-    "test": "node --test tests/core.test.js tests/expansion.test.js tests/speech.test.js",
+    "test": "node --test tests/core.test.js tests/expansion.test.js tests/speech.test.js tests/new-types.test.js",
     "test:browser": "node tests/browser.js"
   },
   "license": "MIT",

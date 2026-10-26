@@ -24,9 +24,9 @@ async function finishRound(page,config,{wrongFirst=false}={}){
       const left=page.locator(`[data-left="${id}"] span`),right=page.locator(`[data-right="${id}"]`);
       assert.equal(await left.getAttribute('lang'),q.leftLang);
       assert.equal(await right.getAttribute('lang'),q.rightLang);
-      if(q.leftLang==='ja')assert.equal(await left.getAttribute('data-pronunciation'),q.reading);
+      if(q.leftLang==='ja')assert.equal(await left.getAttribute('data-pronunciation'),q.leftSpeech);
       else assert.equal(await left.getAttribute('data-pronunciation'),null,'Chinese prompt must not reveal Japanese answer');
-      if(q.rightLang==='ja'){assert.equal(await right.getAttribute('data-pronunciation'),q.reading);assert.equal(await right.locator('..').locator('.speak-button').count(),1);}
+      if(q.rightLang==='ja'){assert.equal(await right.getAttribute('data-pronunciation'),q.rightSpeech);assert.equal(await right.locator('..').locator('.speak-button').count(),1);}
       assert.equal(await page.locator(`[data-right="${id}"]`).textContent(),q.rightLabel);
       await page.locator(`[data-left="${id}"]`).click();await page.locator(`[data-right="${id}"]`).click();
     }

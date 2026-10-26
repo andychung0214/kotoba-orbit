@@ -1,5 +1,6 @@
 import {kana,words,sentences,songs} from './content.js';
 import {songLessons} from './song-lessons.js';
+import {newQuestions} from './new-questions.js';
 
 export const questionTypes={
  kana:{mixed:'混合題型',reading:'假名 → 讀音',reverse:'讀音 → 假名',script:'平片假名互換',sequence:'連續假名讀音',sequenceScript:'連續字形轉換'},
@@ -8,6 +9,11 @@ export const questionTypes={
  song:{mixed:'七種題型混合練習'}
 };
 export const typeLabels={reading:'讀音辨識',reverse:'讀音選字',script:'字形互換',meaning:'意思辨識',order:'句子重組',cloze:'中文提示填空',vocabulary:'主題詞彙',comprehension:'原創例句理解',story:'原作背景辨識',sequence:'連續假名讀音',sequenceScript:'連續字形轉換',fromMeaning:'中文配日文',fromReading:'讀音配漢字',translation:'中譯日例句',headcloze:'中文提示句首填空',wordTranslation:'中譯日單字'};
+Object.assign(questionTypes.kana,{mora:'拍數辨識',spelling:'單字缺字補全'});
+Object.assign(questionTypes.match,{antonym:'反義詞配對',collocation:'自然搭配詞'});
+Object.assign(questionTypes.order,{intent:'語句意圖辨識',repair:'文法修正'});
+questionTypes.song.mixed='九種題型混合練習';
+Object.assign(typeLabels,{mora:'拍數辨識',spelling:'單字缺字補全',antonym:'反義詞配對',collocation:'自然搭配詞',intent:'語句意圖辨識',repair:'文法修正',inference:'短文推論',response:'情境接話'});
 function choice(data,alternatives){
  const distractors=[...new Set(alternatives)].filter(answer=>answer!==data.answer).slice(0,3);
  return {answerLang:'ja',...data,kind:'choice',options:[data.answer,...distractors],optionPool:[...new Set(alternatives)].filter(answer=>answer!==data.answer)};
@@ -87,5 +93,6 @@ export function buildBank({mode,level='beginner',type='mixed',kanaType='hira',so
    choice({...context,id:`${songId}-${level}-author`,sourceId:`${songId}-author`,prompt:`〈${song.title}〉的原作作者是？`,answer:song.author},songs.map(s=>s.author))
   );
  }
+ bank.push(...newQuestions({mode,level,kanaType,songIndex:Math.max(0,songs.findIndex(s=>s.id===songId))},choice));
  return type==='mixed'?bank:bank.filter(q=>q.type===type);
 }

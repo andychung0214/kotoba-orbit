@@ -15,7 +15,7 @@ test('expanded learning material covers every level',()=>{
 for(const mode of ['kana','match','order','song']) for(const level of Object.keys(levels)){
   test(`${mode}/${level}: varied bank, unique answers, deterministic sampling`,()=>{
     const bank=buildBank({mode,level,kanaType:'hira',songId:'yoru'});
-    assert.equal(new Set(bank.map(q=>q.type)).size,mode==='song'?7:5);
+    assert.equal(new Set(bank.map(q=>q.type)).size,mode==='song'?9:7);
     assert.equal(new Set(bank.map(q=>q.id)).size,bank.length);
     for(const q of bank){
       assert.equal(q.level,level);assert.ok(q.explanation);
@@ -42,7 +42,7 @@ for(const mode of ['kana','match','order','song']) for(const level of Object.key
 test('all sixteen songs have substantial distinct three-level banks',()=>{
   for(const song of songs)for(const level of Object.keys(levels)){
     const bank=buildBank({mode:'song',level,songId:song.id});
-    assert.equal(bank.length,28,`${song.id}/${level}`);
+    assert.equal(bank.length,36,`${song.id}/${level}`);
     assert.equal(bank.filter(q=>q.type==='story').length,2,'original story learning is retained');
     assert.ok(new Set(bank.map(q=>q.sourceId)).size>=6);
     for(const q of bank){assert.equal(new Set(q.options).size,4);assert.ok(q.options.includes(q.answer));}
