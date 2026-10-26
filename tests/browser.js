@@ -21,6 +21,12 @@ async function finishRound(page,config,{wrongFirst=false}={}){
     if(wrongFirst){await page.locator(`[data-left="${ids[0]}"]`).click();await page.locator(`[data-right="${ids[1]}"]`).click();assert.ok((await page.locator('#feedback').textContent()).includes('還沒有'));}
     for(const id of ids){
       const q=byId.get(id);assert.ok(q,`match ${id} in selected bank`);seen.push(q.sourceId);types.add(q.type);
+      const left=page.locator(`[data-left="${id}"] span`),right=page.locator(`[data-right="${id}"]`);
+      assert.equal(await left.getAttribute('lang'),q.leftLang);
+      assert.equal(await right.getAttribute('lang'),q.rightLang);
+      if(q.leftLang==='ja')assert.equal(await left.getAttribute('data-pronunciation'),q.reading);
+      else assert.equal(await left.getAttribute('data-pronunciation'),null,'Chinese prompt must not reveal Japanese answer');
+      if(q.rightLang==='ja'){assert.equal(await right.getAttribute('data-pronunciation'),q.reading);assert.equal(await right.locator('..').locator('.speak-button').count(),1);}
       assert.equal(await page.locator(`[data-right="${id}"]`).textContent(),q.rightLabel);
       await page.locator(`[data-left="${id}"]`).click();await page.locator(`[data-right="${id}"]`).click();
     }
@@ -29,6 +35,7 @@ async function finishRound(page,config,{wrongFirst=false}={}){
     for(let i=0;i<total;i++){
       const id=await page.locator('#dialog-body').getAttribute('data-question-id');
       const q=byId.get(id);assert.ok(q,`question ${id} in selected bank`);seen.push(q.sourceId);types.add(q.type);
+      if(q.speechPrompt){assert.equal(await page.locator('.question-main').getAttribute('data-pronunciation'),q.speechPrompt);await page.locator('.question-main + .speak-button').waitFor();}
       if(q.kind==='order'){
         if(i===0){await page.locator('#check-order').click();assert.ok(await page.locator('#next-question').isHidden());}
         const indices=q.tokens.map((_,j)=>j);if(wrongFirst&&i===0)indices.reverse();
@@ -36,6 +43,7 @@ async function finishRound(page,config,{wrongFirst=false}={}){
         await page.locator('#check-order').click();
       }else{
         assert.equal(await page.locator('.choice').first().getAttribute('lang'),q.answerLang);
+        if(q.answerLang==='ja')assert.equal(await page.locator('.choices .speak-button').count(),4,'every Japanese answer has pronunciation');
         if(q.promptLang)assert.equal(await page.locator('.question-main').getAttribute('lang'),q.promptLang);
         const choices=await page.locator('.choice').allTextContents();
         assert.equal(choices.length,4);assert.equal(new Set(choices).size,4);assert.ok(choices.includes(q.answer));

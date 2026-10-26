@@ -35,12 +35,14 @@ function updateXP() { $('#xp-total').textContent = `${progress.xp} XP`; }
 function today() {const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function levelOptions(){return Object.entries(levels).map(([id,label])=>`<option value="${id}" ${id===level?'selected':''}>${label}</option>`).join('');}
 function settings() { return `<div class="practice-settings"><label for="level">練習難度</label><select id="level">${levelOptions()}</select><label for="kana-type">假名字形</label><select id="kana-type"><option value="hira" ${kanaType==='hira'?'selected':''}>平假名</option><option value="kata" ${kanaType==='kata'?'selected':''}>片假名</option></select><span class="hint">四種遊戲皆適用 · 每局隨機出題</span></div>`; }
-function typePicker(mode){return mode==='song'?'<p class="bank-hint">每首 54 題 · 三種難度</p>':`<label class="type-label" for="type-${mode}">練習題型</label><select id="type-${mode}" class="type-picker" data-practice-type="${mode}">${Object.entries(questionTypes[mode]).map(([value,label])=>`<option value="${value}" ${practiceTypes[mode]===value?'selected':''}>${label}</option>`).join('')}</select>`;}
+const songQuestionCount=(id,selectedLevel)=>buildBank({mode:'song',songId:id,level:selectedLevel}).length;
+const songTotalCount=id=>Object.keys(levels).reduce((sum,l)=>sum+songQuestionCount(id,l),0);
+function typePicker(mode){return mode==='song'?`<p class="bank-hint">每首 ${songTotalCount('yoru')} 題 · 七種題型</p>`:`<label class="type-label" for="type-${mode}">練習題型</label><select id="type-${mode}" class="type-picker" data-practice-type="${mode}">${Object.entries(questionTypes[mode]).map(([value,label])=>`<option value="${value}" ${practiceTypes[mode]===value?'selected':''}>${label}</option>`).join('')}</select>`;}
 const gameCards = () => `<div class="games-grid">
   ${[
     ['kana','あ','基礎 → 進階','假名閃卡','清音、濁音到拗音。<br>讀音、選字與字形互換。','8 題 · 隨機出題'],
     ['match','結','基礎 → 進階','詞彙連線','把意思連起來。<br>漢字、讀音與中文一起記。','5 組 · 約 3 分鐘'],
-    ['order','文','基礎 → 進階','句子拼軌','重組、句意與填空。<br>72 句生活日語，換個角度練習。','6 題 · 隨機出題'],
+    ['order','文','基礎 → 進階','句子拼軌','重組、中譯日與雙向填空。<br>72 句生活日語，換個角度練習。','6 題 · 隨機出題'],
     ['song','♫','16 首讀本','音樂讀本','沿著喜歡的旋律。<br>主題詞彙、原創例句與文法。','6 題 · 隨機出題']
   ].map(([mode,symbol,tag,title,description,meta])=>`<article class="game-card"><div class="card-top"><div class="game-symbol" lang="ja" aria-hidden="true">${symbol}</div><span class="chip">${tag}</span></div><h3>${title}</h3><p>${description}</p>${typePicker(mode)}<button class="card-action" data-start="${mode}" aria-label="開始${title}">${meta}<span aria-hidden="true">↗</span></button></article>`).join('')}
 </div>`;
@@ -53,7 +55,7 @@ function home() {
 }
 function songRows(query='') {
   const filtered=songs.filter(s=>`${s.title} ${s.zh} ${s.roman} ${s.theme}`.toLowerCase().includes(query.toLowerCase().trim()));
-  return filtered.length?filtered.map(s=>{const i=songs.indexOf(s); return `<button class="song-card" data-song="${s.id}"><span class="album-art" style="--cover:${coverColors[i%8]}" lang="ja">${escape(s.word[0])}</span><span><h3 lang="ja">${escape(s.title)}</h3><p>${escape(s.zh)} · ${escape(s.theme)}</p><span class="chip">${s.year} / 三級 54 題</span></span><span class="song-number">${String(i+1).padStart(2,'0')} ↗</span></button>`;}).join(''):'<p class="empty">沒有符合的曲目。試試中文曲名、日文或羅馬拼音。</p>';
+  return filtered.length?filtered.map(s=>{const i=songs.indexOf(s); return `<button class="song-card" data-song="${s.id}"><span class="album-art" style="--cover:${coverColors[i%8]}" lang="ja">${escape(s.word[0])}</span><span><h3 lang="ja">${escape(s.title)}</h3><p>${escape(s.zh)} · ${escape(s.theme)}</p><span class="chip">${s.year} / 三級 ${songTotalCount(s.id)} 題</span></span><span class="song-number">${String(i+1).padStart(2,'0')} ↗</span></button>`;}).join(''):'<p class="empty">沒有符合的曲目。試試中文曲名、日文或羅馬拼音。</p>';
 }
 function render() {
   pronunciation.stop();
@@ -94,7 +96,7 @@ function showSong(id) {
   pronunciation.stop();
   const song=songs.find(s=>s.id===id); if(!song)return;
   session=null;
-  body.innerHTML=`<article class="song-detail"><div class="eyebrow">YOASOBI / ${song.year}</div><h2 id="dialog-title" lang="ja">${escape(song.title)}</h2><p>${escape(song.zh)} · ${escape(song.theme)}</p><dl class="detail-meta"><dt>原作</dt><dd lang="ja">${escape(song.story)}</dd><dt>作者</dt><dd lang="ja">${escape(song.author)}</dd><dt>這篇讀本練習什麼</dt><dd>「<span lang="ja" data-pronunciation="${escape(song.reading)}">${escape(song.word)}（${escape(song.reading)}）</span>」：${escape(song.meaning)}。先讀背景，再練習單字與一句生活日語。</dd></dl><p>這裡用「${escape(song.theme)}」作為學習切入點。它是本站的主題延伸，不是原作情節摘要，也不是歌詞逐句翻譯。想深入理解作品，請閱讀原作來源。</p><div class="source-links"><a href="${song.source}" target="_blank" rel="noopener noreferrer">原作／出版來源 ↗</a><a href="${song.listen}" target="_blank" rel="noopener noreferrer">觀看官方 MV ↗</a></div><div class="practice-settings"><label for="song-level">這回合的難度</label><select id="song-level">${levelOptions()}</select><span class="hint">每級 18 題 · 隨機抽 6 題</span></div><button class="primary" data-song-start="${song.id}">開始隨機 6 題練習 ↗</button></article>`;
+  body.innerHTML=`<article class="song-detail"><div class="eyebrow">YOASOBI / ${song.year}</div><h2 id="dialog-title" lang="ja">${escape(song.title)}</h2><p>${escape(song.zh)} · ${escape(song.theme)}</p><dl class="detail-meta"><dt>原作</dt><dd lang="ja">${escape(song.story)}</dd><dt>作者</dt><dd lang="ja">${escape(song.author)}</dd><dt>這篇讀本練習什麼</dt><dd>「<span lang="ja" data-pronunciation="${escape(song.reading)}">${escape(song.word)}（${escape(song.reading)}）</span>」：${escape(song.meaning)}。先讀背景，再練習單字與一句生活日語。</dd></dl><p>這裡用「${escape(song.theme)}」作為學習切入點。它是本站的主題延伸，不是原作情節摘要，也不是歌詞逐句翻譯。想深入理解作品，請閱讀原作來源。</p><div class="source-links"><a href="${song.source}" target="_blank" rel="noopener noreferrer">原作／出版來源 ↗</a><a href="${song.listen}" target="_blank" rel="noopener noreferrer">觀看官方 MV ↗</a></div><div class="practice-settings"><label for="song-level">這回合的難度</label><select id="song-level">${levelOptions()}</select><span class="hint">每級 ${songQuestionCount(song.id,level)} 題 · 七種題型隨機抽 6 題</span></div><button class="primary" data-song-start="${song.id}">開始隨機 6 題練習 ↗</button></article>`;
   openDialog('MUSIC READER / 原作與日語');
 }
 function start(mode, songId) {
@@ -121,7 +123,7 @@ function renderQuestion() {
   const q=s.questions[s.index];
   const order=q.kind==='order';
   body.dataset.questionId=q.id;body.dataset.questionType=q.type;
-  body.innerHTML=`<h2 id="dialog-title" class="question-heading">${typeLabels[q.type]} · ${levels[s.level]}</h2><progress max="${s.questions.length}" value="${s.index}" aria-label="答題進度"></progress><div ${q.speechPrompt?`data-pronunciation="${escape(q.speechPrompt)}"`:""} lang="${q.promptLang||'zh-Hant'}" class="question-main ${s.mode==='kana'&&q.type==='reading'?'':'long'}">${escape(order?q.meaning:q.prompt)}</div>${order?`<div class="selected-tokens" id="selected-tokens" aria-label="已選詞塊"></div><div class="token-bank" id="token-bank">${shuffle(q.tokens.map((text,id)=>({text,id}))).map(t=>`<button class="token" data-token="${t.id}" lang="ja">${escape(t.text)}</button>`).join('')}</div><button class="secondary" id="check-order">確認句子</button>`:`<div class="choices">${q.options.map((o,i)=>`<button class="choice" lang="${q.answerLang}" data-choice="${i}">${escape(o)}</button>`).join('')}</div>`}<div id="feedback" aria-live="polite"></div><div class="session-footer"><span class="hint">${s.index+1} / ${s.questions.length} 題 · 答對 ${s.correct} 題</span><button id="next-question" class="primary" hidden>${s.index===s.questions.length-1?'查看學習成果':'下一題 →'}</button></div>`;
+  body.innerHTML=`<h2 id="dialog-title" class="question-heading">${typeLabels[q.type]} · ${levels[s.level]}</h2><progress max="${s.questions.length}" value="${s.index}" aria-label="答題進度"></progress><div ${q.speechPrompt?`data-pronunciation="${escape(q.speechPrompt)}"`:""} lang="${q.promptLang||'zh-Hant'}" class="question-main ${s.mode==='kana'&&q.type==='reading'?'':'long'}">${escape(order?q.meaning:q.prompt)}</div>${order?`<div class="selected-tokens" id="selected-tokens" aria-label="已選詞塊"></div><div class="token-bank" id="token-bank">${shuffle(q.tokens.map((text,id)=>({text,id}))).map(t=>`<button class="token" data-token="${t.id}" lang="ja">${escape(t.text)}</button>`).join('')}</div><button class="secondary" id="check-order">確認句子</button>`:`<div class="choices">${q.options.map((o,i)=>`<button class="choice" lang="${q.answerLang}" ${q.optionReadings?.[o]?`data-pronunciation="${escape(q.optionReadings[o])}"`:""} data-choice="${i}">${escape(o)}</button>`).join('')}</div>`}<div id="feedback" aria-live="polite"></div><div class="session-footer"><span class="hint">${s.index+1} / ${s.questions.length} 題 · 答對 ${s.correct} 題</span><button id="next-question" class="primary" hidden>${s.index===s.questions.length-1?'查看學習成果':'下一題 →'}</button></div>`;
 }
 function answer(value) {
   const s=session;if(!s||s.answered)return;
@@ -139,12 +141,12 @@ function answer(value) {
 function renderMatch() {
   pronunciation.stop();
   const s=session;
-  body.innerHTML=`<h2 id="dialog-title" class="question-heading">讓單字，遇見它的意思。</h2><p class="hint">看左側提示，配對右側的讀音或中文。答錯可以繼續；首次配對正確才計分。</p><progress max="5" value="${s.matched.length}" aria-label="配對進度"></progress><div class="match-grid"><div class="match-column">${s.pairs.map(w=>`<button class="match-button ${s.matched.includes(w.id)?'matched':''}" data-left="${w.id}" ${s.matched.includes(w.id)?'disabled':''}><span lang="ja" data-pronunciation="${escape(w.reading)}">${escape(w.leftLabel)}</span><small>${w.leftHint}</small></button>`).join('')}</div><div class="match-column">${s.right.map(w=>`<button class="match-button ${s.matched.includes(w.id)?'matched':''}" data-right="${w.id}" lang="${w.type==='reading'?'ja':'zh-Hant'}" ${s.matched.includes(w.id)?'disabled':''}>${escape(w.rightLabel)}${s.matched.includes(w.id)?' ✓':''}</button>`).join('')}</div></div><div id="feedback" class="feedback" aria-live="polite">${s.matched.length?`已完成 ${s.matched.length} / 5 組配對。`:'選一個日語單字開始。'}</div><div class="session-footer"><span class="hint">${s.matched.length} / 5 組</span><button class="primary" id="finish-match" ${s.matched.length===5?'':'hidden'}>查看學習成果</button></div>`;
+  body.innerHTML=`<h2 id="dialog-title" class="question-heading">讓意思、讀音與字形連起來。</h2><p class="hint">看左側提示，配對右側的中文、日文或讀音。答錯可以繼續；首次配對正確才計分。</p><progress max="5" value="${s.matched.length}" aria-label="配對進度"></progress><div class="match-grid"><div class="match-column">${s.pairs.map(w=>`<button class="match-button ${s.matched.includes(w.id)?'matched':''}" data-left="${w.id}" ${s.matched.includes(w.id)?'disabled':''}><span lang="${w.leftLang}" ${w.leftSpeech?`data-pronunciation="${escape(w.leftSpeech)}"`:""}>${escape(w.leftLabel)}</span><small>${w.leftHint}</small></button>`).join('')}</div><div class="match-column">${s.right.map(w=>`<button class="match-button ${s.matched.includes(w.id)?'matched':''}" data-right="${w.id}" lang="${w.rightLang}" ${w.rightSpeech?`data-pronunciation="${escape(w.rightSpeech)}"`:""} ${s.matched.includes(w.id)?'disabled':''}>${escape(w.rightLabel)}${s.matched.includes(w.id)?' ✓':''}</button>`).join('')}</div></div><div id="feedback" class="feedback" aria-live="polite">${s.matched.length?`已完成 ${s.matched.length} / 5 組配對。`:'選一個左側提示開始。'}</div><div class="session-footer"><span class="hint">${s.matched.length} / 5 組</span><button class="primary" id="finish-match" ${s.matched.length===5?'':'hidden'}>查看學習成果</button></div>`;
 }
 function matchRight(id) {
   const s=session;
   if(!s||s.mode!=='match'||s.recorded||s.matched.includes(id))return;
-  if(!s.left){$('#feedback').textContent='先選左邊的日語單字，再選讀音或意思。';return;}
+  if(!s.left){$('#feedback').textContent='先選左側提示，再選對應的字形、讀音或意思。';return;}
   if(s.left===id){s.matched.push(id);if(!s.mistakes.has(id))s.correct++;s.left=null;renderMatch();if(s.matched.length===5)$('#finish-match').focus();}
   else {s.mistakes.add(s.left);$('#feedback').textContent='還沒有配對成功。保留左邊的單字，再找找對應的讀音或意思。';}
 }
@@ -178,7 +180,7 @@ document.addEventListener('click',e=>{
   if(b.dataset.token!==undefined&&!s.answered){const id=Number(b.dataset.token);if(!s.selected.includes(id)){s.selected.push(id);b.disabled=true;updateTokens();}return;}
   if(b.dataset.unselect!==undefined&&!s.answered){const id=Number(b.dataset.unselect);s.selected=s.selected.filter(i=>i!==id);$(`[data-token="${id}"]`).disabled=false;updateTokens();return;}
   if(b.id==='check-order'){answer();return;}
-  if(b.dataset.left){s.left=b.dataset.left;body.querySelectorAll('[data-left]').forEach(x=>x.classList.toggle('selected',x.dataset.left===s.left));$('#feedback').textContent='依照左邊的提示，選擇右側對應的讀音或中文。';return;}
+  if(b.dataset.left){s.left=b.dataset.left;body.querySelectorAll('[data-left]').forEach(x=>x.classList.toggle('selected',x.dataset.left===s.left));$('#feedback').textContent='依照左側提示，選擇右側對應的字形、讀音或中文。';return;}
   if(b.dataset.right){matchRight(b.dataset.right);return;}
   if(b.id==='finish-match'&&s.matched.length===5)finish();
 });

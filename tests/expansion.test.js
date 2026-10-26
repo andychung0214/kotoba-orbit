@@ -15,7 +15,7 @@ test('expanded learning material covers every level',()=>{
 for(const mode of ['kana','match','order','song']) for(const level of Object.keys(levels)){
   test(`${mode}/${level}: varied bank, unique answers, deterministic sampling`,()=>{
     const bank=buildBank({mode,level,kanaType:'hira',songId:'yoru'});
-    assert.ok(new Set(bank.map(q=>q.type)).size>=3);
+    assert.equal(new Set(bank.map(q=>q.type)).size,mode==='song'?7:5);
     assert.equal(new Set(bank.map(q=>q.id)).size,bank.length);
     for(const q of bank){
       assert.equal(q.level,level);assert.ok(q.explanation);
@@ -42,16 +42,41 @@ for(const mode of ['kana','match','order','song']) for(const level of Object.key
 test('all sixteen songs have substantial distinct three-level banks',()=>{
   for(const song of songs)for(const level of Object.keys(levels)){
     const bank=buildBank({mode:'song',level,songId:song.id});
-    assert.equal(bank.length,18,`${song.id}/${level}`);
+    assert.equal(bank.length,28,`${song.id}/${level}`);
     assert.equal(bank.filter(q=>q.type==='story').length,2,'original story learning is retained');
     assert.ok(new Set(bank.map(q=>q.sourceId)).size>=6);
     for(const q of bank){assert.equal(new Set(q.options).size,4);assert.ok(q.options.includes(q.answer));}
   }
 });
+
+test('new question directions expose only visible Japanese for pronunciation',()=>{
+ for(const level of Object.keys(levels)){
+  for(const mode of ['order','song']){
+   const bank=buildBank({mode,level,songId:'yoru'});
+   const translated=bank.filter(q=>q.type==='translation');assert.ok(translated.length);
+   for(const q of translated){assert.equal(q.answerLang,'ja');assert.ok(!q.speechPrompt);assert.ok(q.speechAnswer);}
+   const blanks=bank.filter(q=>q.type==='headcloze');assert.ok(blanks.length);
+   for(const q of blanks){assert.ok(q.prompt.includes(q.speechPrompt));assert.equal(q.speechAnswer,q.answer+q.speechPrompt);}
+  }
+  const pairs=buildBank({mode:'match',level,type:'fromMeaning'});assert.equal(pairs.length,24);
+  for(const q of pairs){assert.equal(q.leftLang,'zh-Hant');assert.equal(q.rightLang,'ja');assert.equal(q.rightSpeech,q.reading);}
+  assert.equal(buildBank({mode:'kana',level,type:'sequence'}).length,kana.filter(k=>k.level===level).length);
+ }
+});
 test('empty, exhausted and tiny pools terminate without duplicate material',()=>{
   assert.deepEqual(sampleRound([],8),[]);
   const bank=[{id:'a1',sourceId:'a',type:'one'},{id:'a2',sourceId:'a',type:'two'}];
   assert.equal(sampleRound(bank,8,['a'],random(1)).length,1);
+});
+
+test('mixed matching rejects duplicate prompts as well as duplicate answers',()=>{
+ const bank=[
+  {sourceId:'a',type:'a',leftLabel:'こうえん',rightLabel:'公園'},
+  {sourceId:'b',type:'b',leftLabel:'こうえん',rightLabel:'講演'},
+  {sourceId:'c',type:'c',leftLabel:'公園',rightLabel:'こうえん'}
+ ];
+ const round=sampleRound(bank,3,[],random(2));
+ assert.equal(round.length,2);assert.equal(new Set(round.map(q=>q.leftLabel)).size,round.length);
 });
 test('new sentence reordering accepts natural subject/location and object/time orders',()=>{
   for(const [meaning,answer] of [
